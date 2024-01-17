@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section>
+
+        <!--  -->
+        <form action="" id="search">
+            <input type="text" name="q" placeholder="🔍 Nimani qidirmoqchisiz ?" />
+            <button id="search-button" class="fa fa-search"></button>
+        </form>
+
+        <!-- Operators -->
+        <div id="oper-border">
+            <div id="operators">
+                <div id="operators-title">
+                    <h3>Aloqa operatorlari</h3>
+                </div>
+                <div id="operators-list">
+                    <!-- Operator Boxs -->
+                    {% for operator in operators %}
+                        <a id="operator-box" href="/?com={{ operator.name }}" style="border: solid 4px  {{ operator.color_column }};">
+                            <img src="{{ operator.photo.url }}"  alt="operator logo" />
+                            <h4 style="color: black;">{{ operator.name }}</h4>
+                        </a>
+                    {% empty %}
+                        <h1>Operatorlar mavjud emas</h1>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Advertise Field (Blank) -->
+        <div id="ads">
+            <!-- Reklama uchun joy -->
+        </div>
+
+        <!-- Maqolalar -->
+        <div id="articles-border">
+            <div id="articles">
+                <!-- Article Title -->
+                <div id="articles-title">
+                    <h3>So'nggi Maqolalar</h3>
+                </div>
+                <!-- All Articles -->
+                <div id="articles-list">
+                    <!-- Add Delete -->
+                    {% for post in posts %}
+                        <div id="article-box">
+                            <!--  -->
+                            <div id="logo-name">
+                                <img src="{{ post.operator.photo.url }}" alt="operator logo"/>
+                                <p>{{ post.operator.name }}</p>
+                            </div>
+                            <!--  -->
+                            <div id="title-info">
+                                <h3>{{ post.title }}</h3>
+                                <p>{{ post.body }}</p>
+                                <div id="arttic">
+                                    <a href="/?tag={{ post.tag }}">{{ post.tag }}</a>
+                                    <a href="{% url 'post' post.slug %}">Batafsil</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <h1>Maqolalar mavjud emas</h1>
+                    {% endfor %}
+                </div>           
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if posts.has_previous %}
+                            <a href="?page=1">&laquo;</a>
+                            <a href="?page={{ posts.previous_page_number }}">&#8249;</a>
+                        {% endif %}
+                
+                        <span class="current">
+                            <h1>{{ posts.number }}</h1> 
+                        </span>
+                
+                        {% if posts.has_next %}
+                            <a href="?page={{ posts.next_page_number }}">&#8250;</a>
+                            <a href="?page={{ posts.paginator.num_pages }}">&raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Functions -->
+        <div id="additional">
+            <!-- Message Box -->
+            <div id="message-box">
+                <div id="contact-list">
+                    <div id="fbb" onclick="TelegramBtn()"><i class="fa fa-paper-plane"></i>Telegram</div>
+                    <div id="a" onclick="StartChat()"><i class="fa fa-comments"></i>Send Message</div>
+                </div>
+                <div id="message-hr" onclick="ShowDisplay()"></div>
+            </div>
+
+            <!-- Pop-Up Contact Us -->
+            <div id="pop-contact">
+                <div id="pop-title">
+                    <p onclick="ExitBtn()" id="pop-exit">X</p>
+                    <a href=""></a>
+                </div>
+                <div id="live-chat">
+                    <div id="operatorr">
+                        <p>Hello World ! This is my world is big for green</p>
+                    </div>
+                    <div id="userr">
+                        <p id="ozgr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores aspernatur deserunt officiis dolorem distinctio voluptatem quidem alias eligendi dolore excepturi rerum, ratione esse. Blanditiis tempore ipsa error architecto facilis sed?</p>
+                        <p id="ozgr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ab quibusdam molestiae odio, aperiam beatae dignissimos vitae, quisquam id quos impedit optio? Debitis quam, animi sint natus quia doloremque nostrum. Atque ad quia reprehenderit consequuntur esse iste! Maxime reiciendis unde quidem expedita quis animi ducimus cupiditate, harum tenetur earum eius!</p>
+
+                    </div>
+                </div>
+                <form action="" autocomplete="off">
+                    <input id="chat-send" type="text" placeholder="Yoz ..." />
+                    <button id="sender"></button>
+                </form>
+            </div>
+                        <!-- Pop-Up Poll Result -->
+            <div id="pop-poll-result">
+                <div id="names">
+                    {% for operator in operators %}
+                        <h3>{{ operator.name }} - {{ operator.votes }} ({{ operator.percentage }}%)</h3>
+                        <div style="border: solid 1px {{ operator.color_column }}; width: 100%;">
+                            <div class="ucell" role="progressbar" style="width: {{ operator.percentage }}%; background:  {{ operator.color_column }};" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    {% endfor %}
+                    <br>
+                    <h3>Ovoz berganlar : <span>{{ total_votes }}</span></h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="comments-border">
+        <div id="comments">
+            <!-- Comments -->
+            {% for comment in comments %}
+                <a href="" id="comm">
+                    <div id="comm-title">
+                        <h2>{{ comment.name }}</h2>
+                        <h5>{{ comment.date|date:"d.m.Y" }}</h5>
+                    </div>
+                    <div id="comm-msg">
+                        <p>{{ comment.message }}</p>
+                    </div>
+                    <img src="../static/images/user.png" />
+                </a>
+            {% empty %}
+                <h1>Kamentariya mavjud emas</h1>
+            {% endfor %}
+        </div>
+        <a href="{% url 'comments' %}" id="all-comms">Barcha izohlar</a>
+    </div>
+
+    <div id="operator-poll-border">
+        <!-- Poll -->
+        <form action="{% url 'home' %}" id="operator-poll" method="POST">
+            {% csrf_token %}
+            <label for="operator-poll">Qaysi operatordan foydalanasiz ?</label>
+            {% for operator in operators %}
+                <div>
+                    <input type="radio" name="oper" value="{{ operator.pk }}"/>
+                    <label>&nbsp{{ operator.name }}</label>
+                </div>
+            {% endfor %}
+            <input type="submit" id="submit-o" value="Ovoz berish" />
+            <input type="button" id="result-o" value="Natija" onclick="PollResults()" />
+        </form>
+    </div>
+
+{% endblock content %}
